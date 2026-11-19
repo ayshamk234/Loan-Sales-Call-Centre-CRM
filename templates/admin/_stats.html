@@ -1,0 +1,11 @@
+<div class="row g-3 mb-4">
+  <div class="col-6 col-md-4 col-xl-3"><div class="card stat p-3"><div class="text-muted small">Total Leads</div><div class="fs-3 fw-semibold">{{ s.total_leads }}</div></div></div>
+  <div class="col-6 col-md-4 col-xl-3"><div class="card stat p-3"><div class="text-muted small">Employees</div><div class="fs-3 fw-semibold">{{ s.total_employees }}</div></div></div>
+  <div class="col-6 col-md-4 col-xl-3"><div class="card stat p-3"><div class="text-muted small">Total Calls</div><div class="fs-3 fw-semibold">{{ s.total_calls }}</div></div></div>
+  <div class="col-6 col-md-4 col-xl-3"><div class="card stat p-3"><div class="text-muted small">Interested</div><div class="fs-3 fw-semibold">{{ s.interested }}</div></div></div>
+  <div class="col-6 col-md-4 col-xl-3"><div class="card stat p-3"><div class="text-muted small">Pending Follow-ups</div><div class="fs-3 fw-semibold">{{ s.pending_followups }}</div><div class="small text-danger">{{ s.overdue_followups }} overdue</div></div></div>
+  <div class="col-6 col-md-4 col-xl-3"><div class="card stat p-3"><div class="text-muted small">Approved Loans</div><div class="fs-3 fw-semibold text-success">{{ s.approved_loans }}</div></div></div>
+  <div class="col-6 col-md-4 col-xl-3"><div class="card stat p-3"><div class="text-muted small">Rejected Loans</div><div class="fs-3 fw-semibold text-danger">{{ s.rejected_loans }}</div></div></div>
+</div>
+<div class="row g-3"><div class="col-12 col-xl-8"><div class="card p-3"><h6>Daily calls (last 7 days)</h6><canvas id="callsChart" height="110"></canvas></div></div>
+<div class="col-12 col-xl-4"><div class="card p-3"><h6>Leads by status</h6><canvas id="statusChart" height="200"></canvas></div></div></div>

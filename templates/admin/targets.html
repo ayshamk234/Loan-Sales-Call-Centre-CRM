@@ -1,0 +1,10 @@
+{% extends "base/base.html" %}{% block title %}Targets{% endblock %}
+{% block content %}
+<div class="d-flex flex-wrap gap-2 align-items-center mb-3"><h4 class="me-auto mb-0">Daily Targets</h4>
+<form class="d-flex gap-2"><input type="date" name="date" value="{{ d|date:'Y-m-d' }}" class="form-control"><button class="btn btn-primary">Go</button></form></div>
+<div class="card stat p-3 mb-3"><div class="d-flex justify-content-between"><strong>Team: {{ tot_c }} / {{ tot_t }} calls</strong><span>{{ tot_pct }}%</span></div></div>
+<div class="card"><div class="table-responsive"><table class="table align-middle mb-0"><thead class="table-light"><tr><th>Employee</th><th>Target</th><th>Completed</th><th>Remaining</th><th style="min-width:160px">Achievement</th><th>Set target</th></tr></thead>
+{% for u, p in rows %}<tr><td><a href="{% url ns|add:'employee_profile' u.pk %}" class="text-decoration-none fw-semibold">{{ u }}</a></td><td>{{ p.target }}</td><td>{{ p.completed }}</td><td>{{ p.remaining }}</td>
+<td><div class="progress" style="height:16px"><div class="progress-bar {% if p.percent >= 100 %}bg-success{% endif %}" style="width:{{ p.bar }}%">{{ p.percent }}%</div></div></td>
+<td><form method="post" class="d-flex gap-1">{% csrf_token %}<input type="hidden" name="employee" value="{{ u.pk }}"><input type="number" name="target" value="{{ p.target }}" min="1" class="form-control form-control-sm" style="width:80px"><button class="btn btn-sm btn-outline-primary">Save</button></form></td></tr>{% endfor %}
+</table></div></div>{% endblock %}

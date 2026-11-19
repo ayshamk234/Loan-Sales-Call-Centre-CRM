@@ -1,0 +1,17 @@
+{% extends "base/base.html" %}{% load ui %}{% block title %}{{ lead.name }}{% endblock %}
+{% block content %}
+<a href="{% url 'staff_leads' %}" class="small text-decoration-none">&larr; My leads</a>
+<div class="d-flex flex-wrap align-items-center gap-2 my-2"><h4 class="mb-0 me-auto">{{ lead.name }} <span class="badge bg-{{ lead.get_status_display|badge }} fs-6">{{ lead.get_status_display }}</span></h4>
+<span class="small text-muted">Today: {{ p.completed }}/{{ p.target }} calls</span>
+{% if customer %}<a class="btn btn-outline-primary btn-sm" href="{% url 'staff_customer' customer.pk %}">Customer file</a>{% endif %}</div>
+<div class="row g-3"><div class="col-12 col-lg-5"><div class="card p-3 mb-3"><h6>Lead details</h6>
+<div><i class="bi bi-telephone"></i> <a href="tel:{{ lead.phone }}">{{ lead.phone }}</a></div><div><i class="bi bi-envelope"></i> {{ lead.email|default:"—" }}</div>
+<div><i class="bi bi-geo-alt"></i> {{ lead.city|default:"—" }}</div><div><i class="bi bi-cash"></i> {{ lead.get_loan_type_display }} loan · ₹{{ lead.loan_amount|default:"—" }}</div></div>
+<div class="card p-3"><h6>Record call</h6><form method="post">{% csrf_token %}
+{% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+{% for f in form.visible_fields %}<div class="mb-2"><label class="form-label small fw-semibold">{{ f.label }}</label>{{ f }}{% for e in f.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}</div>{% endfor %}
+{{ form.submit_token }}<button class="btn btn-primary w-100">Save call</button></form></div></div>
+<div class="col-12 col-lg-7"><div class="card p-3 mb-3"><h6>Pending follow-ups</h6>{% for f in followups %}<div class="small border-bottom py-1">{{ f.scheduled_at|date:"d M Y H:i" }} — {{ f.notes|default:"—" }}</div>{% empty %}<span class="small text-muted">None.</span>{% endfor %}</div>
+<div class="card p-3"><h6>Call history</h6><div class="table-responsive"><table class="table table-sm mb-0"><thead><tr><th>When</th><th>Status</th><th>Sec</th><th>Remarks</th></tr></thead>
+{% for c in calls %}<tr><td>{{ c.called_at|date:"d M H:i" }}</td><td><span class="badge bg-{{ c.get_status_display|badge }}">{{ c.get_status_display }}</span></td><td>{{ c.duration_seconds }}</td><td>{{ c.remarks }}</td></tr>{% empty %}<tr><td colspan="4" class="text-muted">No calls yet.</td></tr>{% endfor %}</table></div></div></div></div>
+{% endblock %}

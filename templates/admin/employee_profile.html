@@ -1,0 +1,15 @@
+{% extends "base/base.html" %}{% block title %}{{ e }}{% endblock %}
+{% block content %}
+<div class="d-flex align-items-center mb-3 gap-2"><h4 class="me-auto mb-0">{{ e }} <small class="text-muted fs-6">{{ e.employee_code }} · {{ e.designation }}</small></h4>
+<a class="btn btn-outline-secondary btn-sm" href="{% url ns|add:'employees_edit' e.pk %}">Edit</a></div>
+<div class="card p-3 mb-3"><div class="d-flex justify-content-between"><strong>Today's target</strong><span>{{ p.completed }} / {{ p.target }} ({{ p.percent }}%)</span></div>
+<div class="progress mt-2" style="height:14px"><div class="progress-bar" style="width:{{ p.bar }}%"></div></div></div>
+<div class="row g-3 mb-3">
+<div class="col-6 col-md-3"><div class="card stat p-3"><div class="small text-muted">Total calls</div><div class="fs-4">{{ stats.total_calls }}</div></div></div>
+<div class="col-6 col-md-3"><div class="card stat p-3"><div class="small text-muted">Interested</div><div class="fs-4">{{ stats.interested }} <small>({{ stats.rate }}%)</small></div></div></div>
+<div class="col-6 col-md-3"><div class="card stat p-3"><div class="small text-muted">Leads held</div><div class="fs-4">{{ stats.leads }}</div></div></div>
+<div class="col-6 col-md-3"><div class="card stat p-3"><div class="small text-muted">Pending follow-ups</div><div class="fs-4">{{ stats.pending_followups }}</div></div></div>
+<div class="col-6 col-md-3"><div class="card stat p-3"><div class="small text-muted">Applications</div><div class="fs-4">{{ stats.applications }}</div></div></div>
+<div class="col-6 col-md-3"><div class="card stat p-3"><div class="small text-muted">Approved</div><div class="fs-4">{{ stats.approved }}</div></div></div></div>
+<div class="card p-3"><h6>Calls – last 7 days</h6><canvas id="callsChart" height="90"></canvas></div>
+{% endblock %}{% block scripts %}{% include "admin/_chart.html" %}{% endblock %}

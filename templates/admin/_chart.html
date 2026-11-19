@@ -1,0 +1,8 @@
+{{ s.chart_labels|json_script:"c-labels" }}{{ s.chart_data|json_script:"c-data" }}{% if s.status_data %}{{ s.status_labels|json_script:"s-labels" }}{{ s.status_data|json_script:"s-data" }}{% endif %}
+<script>
+const J=id=>JSON.parse(document.getElementById(id).textContent);
+new Chart(document.getElementById("callsChart"),{type:"bar",data:{labels:J("c-labels"),datasets:[{label:"Calls",data:J("c-data"),backgroundColor:"#2563eb",borderRadius:6}]},
+ options:{plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{precision:0}}}}});
+const sc=document.getElementById("statusChart");
+if(sc){new Chart(sc,{type:"doughnut",data:{labels:J("s-labels"),datasets:[{data:J("s-data"),backgroundColor:["#2563eb","#60a5fa","#f59e0b","#10b981","#ef4444","#6366f1","#9ca3af"]}]},options:{plugins:{legend:{position:"bottom"}}}});}
+</script>

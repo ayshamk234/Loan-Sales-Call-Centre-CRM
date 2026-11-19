@@ -1,0 +1,2 @@
+{% for label, name, icon in nav %}<a class="nav-link {% if request.resolver_match.url_name == name %}active{% endif %}" href="{% url ns|add:name %}"><i class="bi {{ icon }}"></i> {{ label }}</a>{% endfor %}
+{% if user.role == "admin" %}<hr>{% if is_mobile %}<a class="nav-link" href="{% url 'dashboard' %}"><i class="bi bi-display"></i> Desktop view</a>{% else %}<a class="nav-link" href="{% url 'mobile:dashboard' %}"><i class="bi bi-phone"></i> Mobile view</a>{% endif %}{% endif %}

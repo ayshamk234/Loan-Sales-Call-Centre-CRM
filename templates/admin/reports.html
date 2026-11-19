@@ -1,0 +1,10 @@
+{% extends "base/base.html" %}{% block title %}Reports{% endblock %}
+{% block content %}<h4 class="mb-3">Reports &amp; Analytics</h4>
+<form class="card p-2 mb-3"><div class="row g-2">
+<div class="col-12 col-md-3"><select name="report" class="form-select">{% for k, n in reports %}<option value="{{ k }}" {% if k == kind %}selected{% endif %}>{{ n }}</option>{% endfor %}</select></div>
+<div class="col-6 col-md-2"><input type="date" name="from" value="{{ df|date:'Y-m-d' }}" class="form-control"></div>
+<div class="col-6 col-md-2"><input type="date" name="to" value="{{ dt|date:'Y-m-d' }}" class="form-control"></div>
+<div class="col-auto"><button class="btn btn-primary">Show</button></div>
+<div class="col-auto"><button name="export" value="csv" class="btn btn-outline-secondary"><i class="bi bi-filetype-csv"></i> CSV</button> <button name="export" value="xlsx" class="btn btn-outline-secondary"><i class="bi bi-file-earmark-excel"></i> Excel</button></div></div></form>
+<div class="card"><div class="card-header bg-white fw-semibold">{{ title }}</div><div class="table-responsive"><table class="table table-hover mb-0"><thead class="table-light"><tr>{% for c in cols %}<th>{{ c }}</th>{% endfor %}</tr></thead>
+{% for r in rows %}<tr>{% for c in r %}<td>{{ c }}</td>{% endfor %}</tr>{% empty %}<tr><td colspan="99" class="text-center text-muted py-4">No data for this period.</td></tr>{% endfor %}</table></div></div>{% endblock %}

@@ -1,0 +1,13 @@
+{% extends "base/base.html" %}{% block title %}My Dashboard{% endblock %}
+{% block content %}<h4 class="mb-3">My Dashboard</h4>
+{% if overdue %}<div class="alert alert-danger py-2"><i class="bi bi-alarm"></i> {{ overdue }} follow-up(s) overdue. <a href="{% url 'staff_followups' %}?tab=overdue">View</a></div>{% endif %}
+<div class="card p-3 mb-3"><div class="d-flex justify-content-between"><strong>Today's target</strong><span>{{ p.completed }} / {{ p.target }} · {{ p.remaining }} remaining</span></div>
+<div class="progress mt-2" style="height:16px"><div class="progress-bar {% if p.percent >= 100 %}bg-success{% endif %}" style="width:{{ p.bar }}%">{{ p.percent }}%</div></div></div>
+<div class="row g-3 mb-3">
+<div class="col-6 col-md-3"><div class="card stat p-3"><div class="small text-muted">Assigned leads</div><div class="fs-3">{{ assigned }}</div></div></div>
+<div class="col-6 col-md-3"><div class="card stat p-3"><div class="small text-muted">Interested today</div><div class="fs-3">{{ interested }}</div></div></div>
+<div class="col-6 col-md-3"><div class="card stat p-3"><div class="small text-muted">Pending follow-ups</div><div class="fs-3">{{ pending }}</div></div></div>
+<div class="col-6 col-md-3"><div class="card stat p-3"><div class="small text-muted">Applications / approved</div><div class="fs-3">{{ apps }} / {{ approved }}</div></div></div></div>
+<div class="row g-3"><div class="col-12 col-lg-7"><div class="card p-3"><h6>My calls – last 7 days</h6><canvas id="callsChart" height="110"></canvas></div></div>
+<div class="col-12 col-lg-5"><div class="card p-3"><h6>Upcoming follow-ups</h6>{% for f in upcoming %}<div class="d-flex justify-content-between border-bottom py-1 small"><a href="{% url 'staff_lead' f.lead_id %}">{{ f.lead.name }}</a><span>{{ f.scheduled_at|date:"d M H:i" }}</span></div>{% empty %}<span class="text-muted small">None scheduled.</span>{% endfor %}</div></div></div>
+{% endblock %}{% block scripts %}{% include "admin/_chart.html" %}{% endblock %}

@@ -1,0 +1,8 @@
+{% extends "base/base.html" %}{% block title %}Bulk Upload{% endblock %}
+{% block content %}<div class="card p-3 p-md-4 mx-auto" style="max-width:720px"><h5>Bulk lead upload</h5>
+<p class="text-muted small">CSV or Excel with columns <code>name, phone</code> (required) and optional <code>email, city, loan_type, loan_amount, source</code>. Duplicate phone numbers are skipped. <a href="{% url ns|add:'leads_sample' %}">Download sample</a></p>
+<form method="post" enctype="multipart/form-data">{% csrf_token %}{{ form.file }}{% for e in form.file.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+<button class="btn btn-primary mt-3">Upload</button> <a class="btn btn-light mt-3" href="{% url ns|add:'leads_list' %}">Back to leads</a></form>
+{% if result %}<hr><div class="row text-center g-2"><div class="col"><div class="fs-4">{{ result.total }}</div><small>Rows</small></div><div class="col"><div class="fs-4 text-success">{{ result.added }}</div><small>Added</small></div>
+<div class="col"><div class="fs-4 text-warning">{{ result.duplicates }}</div><small>Duplicates</small></div><div class="col"><div class="fs-4 text-danger">{{ result.invalid }}</div><small>Invalid</small></div></div>
+{% if result.errors %}<ul class="small text-danger mt-2">{% for e in result.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}{% endif %}</div>{% endblock %}

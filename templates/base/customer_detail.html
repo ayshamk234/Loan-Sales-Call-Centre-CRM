@@ -1,0 +1,24 @@
+{% extends "base/base.html" %}{% load ui %}{% block title %}{{ c.full_name }}{% endblock %}
+{% block content %}
+{% if user.role == "admin" %}<a href="{% url ns|add:'customers_list' %}" class="small text-decoration-none">&larr; Customers</a>{% else %}<a href="{% url 'staff_lead' c.lead_id %}" class="small text-decoration-none">&larr; Lead</a>{% endif %}
+<div class="d-flex align-items-center my-2"><h4 class="me-auto mb-0">{{ c.full_name }}</h4><a class="btn btn-outline-secondary btn-sm" href="{% url 'customer_edit' c.pk %}?next={{ request.path }}">Edit</a></div>
+<div class="row g-3"><div class="col-12 col-lg-4"><div class="card p-3 mb-3"><h6>Profile</h6>
+<div>📞 {{ c.phone }}{% if c.alt_phone %} / {{ c.alt_phone }}{% endif %}</div><div>✉️ {{ c.email|default:"—" }}</div><div>📍 {{ c.city|default:"—" }}</div>
+<div>{{ c.get_employment_type_display }} · income ₹{{ c.monthly_income|default:"—" }}</div><div>Needs: {{ c.loan_requirement|default:"—" }} · ₹{{ c.required_amount|default:"—" }}</div>
+<div class="small text-muted mt-1">Employee: {{ c.lead.assigned_to|default:"Unassigned" }}</div></div>
+<div class="card p-3"><h6>Call history</h6>{% for x in calls %}<div class="small border-bottom py-1">{{ x.called_at|date:"d M H:i" }} · <span class="badge bg-{{ x.get_status_display|badge }}">{{ x.get_status_display }}</span> {{ x.remarks }}</div>{% empty %}<span class="small text-muted">None.</span>{% endfor %}</div></div>
+<div class="col-12 col-lg-8"><div class="card p-3 mb-3"><h6>Documents</h6><div class="table-responsive"><table class="table table-sm align-middle"><thead><tr><th>Type</th><th>Status</th><th>Remarks</th><th></th></tr></thead>
+{% for d in docs %}<tr><td><a href="{% url 'doc_file' d.pk %}" target="_blank">{{ d.get_doc_type_display }}</a></td><td><span class="badge bg-{{ d.get_status_display|badge }}">{{ d.get_status_display }}</span></td><td class="small">{{ d.remarks }}</td>
+<td class="text-nowrap">{% if user.role == "admin" and d.status == "pending" %}
+<form method="post" action="{% url 'doc_verify' d.pk 'approved' %}" class="d-inline">{% csrf_token %}<input type="hidden" name="next" value="{{ request.path }}"><button class="btn btn-sm btn-outline-success">Approve</button></form>
+<form method="post" action="{% url 'doc_verify' d.pk 'rejected' %}" class="d-inline">{% csrf_token %}<input type="hidden" name="next" value="{{ request.path }}"><button class="btn btn-sm btn-outline-danger">Reject</button></form>{% endif %}</td></tr>
+{% empty %}<tr><td colspan="4" class="text-muted">No documents uploaded.</td></tr>{% endfor %}</table></div>
+<form method="post" action="{% url 'doc_upload' c.pk %}" enctype="multipart/form-data" class="row g-2">{% csrf_token %}<input type="hidden" name="next" value="{{ request.path }}">
+<div class="col-md-4">{{ doc_form.doc_type }}</div><div class="col-md-5">{{ doc_form.file }}</div><div class="col-md-3"><button class="btn btn-primary w-100">Upload</button></div><div class="form-text">PDF/JPG/PNG, max 5 MB. Use fictional data only.</div></form></div>
+<div class="card p-3 mb-3"><h6>Loan applications</h6><div class="table-responsive"><table class="table table-sm"><thead><tr><th>Ref</th><th>Bank</th><th>Amount</th><th>Status</th></tr></thead>
+{% for a in apps %}<tr><td>{{ a.reference_no }}</td><td>{{ a.bank }}</td><td>₹{{ a.amount|floatformat:0 }}</td><td><span class="badge bg-{{ a.get_status_display|badge }}">{{ a.get_status_display }}</span></td></tr>{% empty %}<tr><td colspan="4" class="text-muted">None yet.</td></tr>{% endfor %}</table></div>
+<form method="post" action="{% url 'loan_create' c.pk %}" class="row g-2">{% csrf_token %}<input type="hidden" name="next" value="{{ request.path }}">
+<div class="col-md-3">{{ loan_form.bank }}</div><div class="col-md-3">{{ loan_form.scheme }}</div><div class="col-md-2">{{ loan_form.amount }}</div><div class="col-md-2">{{ loan_form.tenure_months }}</div><div class="col-md-2"><button class="btn btn-primary w-100">Create</button></div>
+<div class="d-none">{{ loan_form.notes }}</div></form></div>
+<div class="card p-3"><h6>Follow-ups</h6>{% for f in followups %}<div class="small border-bottom py-1">{{ f.scheduled_at|date:"d M Y H:i" }} · {{ f.get_status_display }} · {{ f.employee }}</div>{% empty %}<span class="small text-muted">None.</span>{% endfor %}</div></div></div>
+{% endblock %}

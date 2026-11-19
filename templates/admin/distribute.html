@@ -1,0 +1,28 @@
+{% extends "base/base.html" %}{% block title %}Lead Distribution{% endblock %}
+{% block content %}
+<div class="d-flex mb-3 align-items-center"><h4 class="me-auto mb-0">Lead Distribution</h4><span class="badge bg-primary fs-6">{{ unassigned_count }} unassigned</span></div>
+<div class="card p-3 mb-3"><div class="table-responsive"><table class="table table-sm mb-0"><thead><tr><th>Employee</th><th>Assigned today</th><th>Total active leads</th></tr></thead>
+{% for s in staff %}<tr><td>{{ s }}</td><td>{{ s.today_assigned }}</td><td>{{ s.active_leads }}</td></tr>{% endfor %}</table></div></div>
+<div class="card p-3"><ul class="nav nav-tabs mb-3">
+<li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#t-auto">Automatic</button></li>
+<li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#t-bulk">Bulk</button></li>
+<li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#t-manual">Manual</button></li>
+<li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#t-re">Reassign</button></li></ul>
+<div class="tab-content">
+<div class="tab-pane fade show active" id="t-auto"><form method="post">{% csrf_token %}<input type="hidden" name="action" value="auto">
+ <p class="small text-muted">Spreads unassigned leads evenly (round-robin) across the selected employees, up to the cap each.</p>
+ {% for s in staff %}<div class="form-check"><input class="form-check-input" type="checkbox" name="employees" value="{{ s.pk }}" id="e{{ s.pk }}" checked><label class="form-check-label" for="e{{ s.pk }}">{{ s }}</label></div>{% endfor %}
+ <label class="form-label mt-2">Max leads per employee</label><input type="number" name="cap" value="100" min="1" class="form-control" style="max-width:160px"><button class="btn btn-primary mt-3">Distribute</button></form></div>
+<div class="tab-pane fade" id="t-bulk"><form method="post" class="row g-2">{% csrf_token %}<input type="hidden" name="action" value="bulk">
+ <div class="col-md-4"><select name="employee" class="form-select" required><option value="">Employee…</option>{% for s in staff %}<option value="{{ s.pk }}">{{ s }}</option>{% endfor %}</select></div>
+ <div class="col-md-3"><input type="number" name="count" min="1" value="100" class="form-control"></div><div class="col-auto"><button class="btn btn-primary">Assign oldest N</button></div></form></div>
+<div class="tab-pane fade" id="t-manual"><form method="post">{% csrf_token %}<input type="hidden" name="action" value="manual">
+ <select name="employee" class="form-select mb-2" required style="max-width:300px"><option value="">Employee…</option>{% for s in staff %}<option value="{{ s.pk }}">{{ s }}</option>{% endfor %}</select>
+ <div class="border rounded p-2" style="max-height:320px;overflow:auto">{% for l in sample %}<div class="form-check"><input class="form-check-input" type="checkbox" name="leads" value="{{ l.pk }}" id="l{{ l.pk }}"><label class="form-check-label" for="l{{ l.pk }}">{{ l.name }} · {{ l.phone }} · {{ l.city }}</label></div>{% empty %}<span class="text-muted">No unassigned leads.</span>{% endfor %}</div>
+ <button class="btn btn-primary mt-2">Assign selected</button></form></div>
+<div class="tab-pane fade" id="t-re"><form method="post" class="row g-2">{% csrf_token %}<input type="hidden" name="action" value="reassign">
+ <div class="col-md-4"><select name="from_emp" class="form-select" required><option value="">From…</option>{% for s in staff %}<option value="{{ s.pk }}">{{ s }}</option>{% endfor %}</select></div>
+ <div class="col-md-4"><select name="to_emp" class="form-select" required><option value="">To…</option>{% for s in staff %}<option value="{{ s.pk }}">{{ s }}</option>{% endfor %}</select></div>
+ <div class="col-md-2"><input type="number" name="count" min="0" placeholder="All" class="form-control"></div><div class="col-auto"><button class="btn btn-primary">Reassign</button></div>
+ <div class="form-text">Moves only untouched/contacted leads. Leave count empty for all.</div></form></div>
+</div></div>{% endblock %}
